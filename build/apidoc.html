@@ -1,0 +1,147 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/ingro/gulp-template-compile#readme"
+
+    >gulp-template-compile (v1.3.1)</a>
+</h1>
+<h4>Gulp task to precompile lodash templates</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.gulp-template-compile">module gulp-template-compile</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-template-compile.gulp-template-compile">
+            function <span class="apidocSignatureSpan"></span>gulp-template-compile
+            <span class="apidocSignatureSpan">(options)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.gulp-template-compile" id="apidoc.module.gulp-template-compile">module gulp-template-compile</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-template-compile.gulp-template-compile" id="apidoc.element.gulp-template-compile.gulp-template-compile">
+        function <span class="apidocSignatureSpan"></span>gulp-template-compile
+        <span class="apidocSignatureSpan">(options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">gulp-template-compile = function (options) {
+    options = options || {};
+
+    function compiler (file) {
+        var name = typeof options.name === &#x27;function&#x27; &#x26;&#x26; options.name(file) || file.relative;
+        var namespace = getNamespaceDeclaration(options.namespace || &#x27;JST&#x27;);
+		var IIFE_start = options.IIFE !== false ? &#x27;(function() {\n&#x27;:&#x27;&#x27;;
+		var IIFE_end = options.IIFE !== false ? &#x27;})();&#x27;:&#x27;&#x27;;
+		
+        var templateHeader = IIFE_start + namespace.declaration;
+
+        var NSwrapper = &#x27;\n\n&#x27; + namespace.namespace + &#x27;[&#x22;&#x27;+ name.replace(/\\/g, &#x27;/&#x27;) +&#x27;&#x22;] = &#x27;;
+
+        var template = tpl(file.contents.toString(), options.templateSettings).source;
+
+        return templateHeader + NSwrapper + template + IIFE_end;
+    }
+
+    var stream = through.obj(function (file, enc, callback) {
+
+        if (file.isNull()) {
+            this.push(file);
+            return callback();
+        }
+
+        if (file.isStream()) {
+            this.emit(&#x27;error&#x27;, new PluginError(PLUGIN_NAME, &#x27;Streams are not supported!&#x27;));
+            return callback();
+        }
+
+        var filePath = file.path;
+
+        try {
+            var compiled = compiler(file);
+
+            file.contents = new Buffer(compiled);
+            file.path = gutil.replaceExtension(file.path, &#x27;.js&#x27;);
+        } catch (err) {
+            this.emit(&#x27;error&#x27;, new PluginError(PLUGIN_NAME, err, {fileName: filePath}));
+            return callback();
+        }
+
+        this.push(file);
+        callback();
+    });
+
+    return stream;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
